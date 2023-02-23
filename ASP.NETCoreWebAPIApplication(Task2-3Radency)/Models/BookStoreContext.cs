@@ -99,6 +99,13 @@ namespace ASP.NETCoreWebAPIApplication_Task2_3Radency_.Models
                 Reviewer = "Robert Brown",
                 BookId = book5.Id
             };
+            Review review6 = new Review
+            {
+                Id = 6,
+                Message = "Good book.",
+                Reviewer = "Jane Smith",
+                BookId = book1.Id
+            };
 
             Rating rating1 = new Rating
             {
@@ -132,7 +139,7 @@ namespace ASP.NETCoreWebAPIApplication_Task2_3Radency_.Models
             };
 
             modelBuilder.Entity<Book>().HasData(book1, book2, book3, book4, book5);
-            modelBuilder.Entity<Review>().HasData(review1, review2, review3, review4, review5);
+            modelBuilder.Entity<Review>().HasData(review1, review2, review3, review4, review5, review6);
             modelBuilder.Entity<Rating>().HasData(rating1, rating2, rating3, rating4, rating5);
         }
     }
