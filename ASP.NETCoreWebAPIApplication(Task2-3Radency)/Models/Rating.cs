@@ -6,7 +6,7 @@ namespace ASP.NETCoreWebAPIApplication_Task2_3Radency_.Models
     {
         [Key]
         public int Id { get; set; }
-        public double Scope { get; set; }
+        public int Scope { get; set; }
 
         public int BookId { get; set; }
         public Book? Book { get; set; }

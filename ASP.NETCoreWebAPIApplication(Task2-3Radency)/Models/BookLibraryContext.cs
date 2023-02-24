@@ -3,13 +3,13 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ASP.NETCoreWebAPIApplication_Task2_3Radency_.Models
 {
-    public class BookStoreContext : DbContext
+    public class BookLibraryContext : DbContext
     {
         public DbSet<Book> Books { get; set; } = null!;
         public DbSet<Rating> Ratings { get; set; } = null!;
         public DbSet<Review> Reviews { get; set; } = null!;
 
-        public BookStoreContext(DbContextOptions<BookStoreContext> options) : base(options)
+        public BookLibraryContext(DbContextOptions<BookLibraryContext> options) : base(options)
         {
             // Викликаємо метод Database.EnsureCreated(), для генерації бд та наповнення її початковими значеннями 
             Database.EnsureCreated();
@@ -110,31 +110,31 @@ namespace ASP.NETCoreWebAPIApplication_Task2_3Radency_.Models
             Rating rating1 = new Rating
             {
                 Id = 1,
-                Scope = 4.5,
+                Scope = 4,
                 BookId = book1.Id
             };
             Rating rating2 = new Rating
             {
                 Id = 2,
-                Scope = 3.8,
+                Scope = 3,
                 BookId = book2.Id
             };
             Rating rating3 = new Rating
             {
                 Id = 3,
-                Scope = 4.2,
+                Scope = 4,
                 BookId = book3.Id
             };
             Rating rating4 = new Rating
             {
                 Id = 4,
-                Scope = 4.0,
+                Scope = 4,
                 BookId = book4.Id
             };
             Rating rating5 = new Rating
             {
                 Id = 5,
-                Scope = 4.7,
+                Scope = 4,
                 BookId = book5.Id
             };
 
