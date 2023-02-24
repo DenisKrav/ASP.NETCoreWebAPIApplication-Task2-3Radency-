@@ -117,14 +117,14 @@ namespace ASP.NETCoreWebAPIApplication_Task2_3Radency_
 
             // Запит Delete, який видяляє книжку за вказаним id, а також перевіряє чи було задано секретне слово, та чи
             // правильне воно
-            app.MapDelete("/api/books/{id:int}", (int id, string secret, BookStoreContext db, IConfiguration conf) =>
+            app.MapDelete("/api/books/{id:int}", async (int id, string secret, BookStoreContext db, IConfiguration conf) =>
             {
                 // Якщо кодове слово вірне, то продовжуємо видалення, якщо ні, то надсилаємо статусний код з
                 // повідомленням про помилку
                 if (secret == conf["MySettings:SecretWord"])
                 {
                     // Отримуємо книгу по id
-                    Book? book = db.Books.FirstOrDefault(u => u.Id == id);
+                    Book? book = await db.Books.FirstOrDefaultAsync(u => u.Id == id);
 
                     // Якщо книга не знайдена, то надсилаємо статусний код помилки інакше видаляємо книгу і надсилаємо результат
                     if (book == null)
@@ -133,7 +133,27 @@ namespace ASP.NETCoreWebAPIApplication_Task2_3Radency_
                     }
                     else
                     {
+                        // Видаляємо усі пов'язані з книгою відгуки та рейтинги
+                        foreach (Review review in db.Reviews)
+                        {
+                            if (review.BookId == book.Id)
+                            {
+                                db.Reviews.Remove(review);
+                                await db.SaveChangesAsync();
+                            }
+                        }
+                        foreach (Rating rating in db.Ratings)
+                        {
+                            if (rating.BookId == book.Id)
+                            {
+                                db.Ratings.Remove(rating);
+                                await db.SaveChangesAsync();
+                            }
+                        }
+                        // Видаляємо книгу
                         db.Books.Remove(book);
+                        await db.SaveChangesAsync();
+
                         return Results.Json(book);
                     }
                 }
@@ -142,6 +162,64 @@ namespace ASP.NETCoreWebAPIApplication_Task2_3Radency_
                     return Results.NotFound(new { message = "Для проведення такої операцї потрібно вказати кодове слово" });
                 }
             });
+
+            // Запит Post, який оброблює маршрут /api/books/save та сзберігає нову книгу, якщо не було вказано id,
+            // інакше дані оновлюються 
+            app.MapPost("/api/books/save", async (Book book, BookStoreContext db) =>
+            {
+                Book? b = await db.Books.FirstOrDefaultAsync(c => c.Id == book.Id);
+
+                if (b == null)
+                {
+                    await db.Books.AddAsync(book);
+                    await db.SaveChangesAsync();
+                    return Results.Json(book.Id);
+                }
+                else
+                {
+                    b.Title = book.Title;
+                    b.Cover = book.Cover;
+                    b.Content = book.Content;
+                    b.Author = book.Author;
+                    b.Genre = book.Genre;
+                    await db.SaveChangesAsync();
+                    return Results.Json(book.Id);
+                }
+            });
+
+            // Запит Put, який оброблює маршрут /api/books/{id:int}/review, та створює новий відгук
+            app.MapPut("/api/books/{id:int}/review", async (int id, Review review, BookStoreContext db) =>
+            {
+                Book? book = await db.Books.FindAsync(id);
+                if (book == null)
+                {
+                    return Results.NotFound();
+                }
+                
+                review.BookId = book.Id;
+                db.Reviews.Add(review);
+                await db.SaveChangesAsync();
+
+                return Results.Json(review.Id);
+            });
+
+            // Запит Put, який оброблює маршрут /api/books/{id}/rate, та створює новий рейтинг
+            app.MapPut("/api/books/{id}/rate", async (int id, Rating rating, BookStoreContext db) =>
+            {
+                Book? book = await db.Books.FindAsync(id);
+                if (book == null)
+                {
+                    return Results.NotFound();
+                }
+
+                rating.BookId = book.Id;
+                db.Ratings.Add(rating);
+                await db.SaveChangesAsync();
+
+                return Results.Json(rating.Id);
+            });
+
+
 
             app.Run();
         }
