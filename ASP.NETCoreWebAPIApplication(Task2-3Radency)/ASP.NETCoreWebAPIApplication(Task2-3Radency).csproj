@@ -16,9 +16,4 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.3" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ClientApp\src\app\" />
-    <Folder Include="ClientApp\src\" />
-  </ItemGroup>
-
 </Project>

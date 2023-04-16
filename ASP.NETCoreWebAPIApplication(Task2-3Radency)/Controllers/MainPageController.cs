@@ -1,4 +1,5 @@
-﻿using ASP.NETCoreWebAPIApplication_Task2_3Radency_.Models;
+﻿using ASP.NETCoreWebAPIApplication_Task2_3Radency_.DTO;
+using ASP.NETCoreWebAPIApplication_Task2_3Radency_.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -24,66 +25,66 @@ namespace ASP.NETCoreWebAPIApplication_Task2_3Radency_.Controllers
         {
             if (order == "author")
             {
-                return Results.Json(db.Books.OrderByDescending(p => p.Author).Select(c => new
+                return Results.Json(db.Books.OrderByDescending(p => p.Author).Select(c => new BooksDTO()
                 {
-                    id = c.Id,
-                    title = c.Title,
-                    author = c.Author,
-                    rating = db.Ratings.Where(i => i.BookId == c.Id).Average(p => p.Scope),
-                    reviewsNumber = db.Reviews.Where(d => d.BookId == c.Id).Count()
+                    Id = c.Id,
+                    Title = c.Title,
+                    Author = c.Author,
+                    Rating = db.Ratings.Where(i => i.BookId == c.Id).Average(p => p.Scope),
+                    ReviewsNumber = db.Reviews.Where(d => d.BookId == c.Id).Count()
                 }));
             }
             else if (order == "title")
             {
-                return Results.Json(db.Books.OrderByDescending(p => p.Title).Select(c => new
+                return Results.Json(db.Books.OrderByDescending(p => p.Title).Select(c => new BooksDTO()
                 {
-                    id = c.Id,
-                    title = c.Title,
-                    author = c.Author,
-                    rating = db.Ratings.Where(i => i.BookId == c.Id).Average(p => p.Scope),
-                    reviewsNumber = db.Reviews.Where(d => d.BookId == c.Id).Count()
+                    Id = c.Id,
+                    Title = c.Title,
+                    Author = c.Author,
+                    Rating = db.Ratings.Where(i => i.BookId == c.Id).Average(p => p.Scope),
+                    ReviewsNumber = db.Reviews.Where(d => d.BookId == c.Id).Count()
                 }));
             }
             else
             {
-                return Results.Json(db.Books.Select(c => new
+                return Results.Json(db.Books.Select(c => new BooksDTO()
                 {
-                    id = c.Id,
-                    title = c.Title,
-                    author = c.Author,
-                    rating = db.Ratings.Where(i => i.BookId == c.Id).Average(p => p.Scope),
-                    reviewsNumber = db.Reviews.Where(d => d.BookId == c.Id).Count()
+                    Id = c.Id,
+                    Title = c.Title,
+                    Author = c.Author,
+                    Rating = db.Ratings.Where(i => i.BookId == c.Id).Average(p => p.Scope),
+                    ReviewsNumber = db.Reviews.Where(d => d.BookId == c.Id).Count()
                 }));
             }
         }
 
-        // Обробка запиту Get за адресою /api/recommended, який повертає перших 10 відсортованих за рейтингом книг з певним жанром,
-        // якщо жанр не вказано, то просто перших 10 книг з найбільшим рейтингом.
+        // Обробка запиту Get за адресою /api/recommended, який повертає перших 10 відсортованих за рейтингом книг з певним
+        // жанром, якщо жанр не вказано, то просто перших 10 книг з найбільшим рейтингом.
         [HttpGet]
         [Route("/api/recommended")]
         public IResult GetRecomendedBooks(string? genre)
         {
             if (genre != null)
             {
-                return Results.Json(db.Books.Where(p => p.Genre == genre).Select(c => new
+                return Results.Json(db.Books.Where(p => p.Genre == genre).Select(c => new BooksDTO()
                 {
-                    id = c.Id,
-                    title = c.Title,
-                    author = c.Author,
-                    rating = db.Ratings.Where(i => i.BookId == c.Id).Average(p => p.Scope),
-                    reviewsNumber = db.Reviews.Where(d => d.BookId == c.Id).Count()
-                }).OrderByDescending(l => l.rating).Take(10));
+                    Id = c.Id,
+                    Title = c.Title,
+                    Author = c.Author,
+                    Rating = db.Ratings.Where(i => i.BookId == c.Id).Average(p => p.Scope),
+                    ReviewsNumber = db.Reviews.Where(d => d.BookId == c.Id).Count()
+                }).OrderByDescending(l => l.Rating).Take(10));
             }
             else
             {
-                return Results.Json(db.Books.Select(c => new
+                return Results.Json(db.Books.Select(c => new BooksDTO()
                 {
-                    id = c.Id,
-                    title = c.Title,
-                    author = c.Author,
-                    rating = db.Ratings.Where(i => i.BookId == c.Id).Average(p => p.Scope),
-                    reviewsNumber = db.Reviews.Where(d => d.BookId == c.Id).Count()
-                }).OrderByDescending(l => l.rating).Take(10));
+                    Id = c.Id,
+                    Title = c.Title,
+                    Author = c.Author,
+                    Rating = db.Ratings.Where(i => i.BookId == c.Id).Average(p => p.Scope),
+                    ReviewsNumber = db.Reviews.Where(d => d.BookId == c.Id).Count()
+                }).OrderByDescending(l => l.Rating).Take(10));
             }
         }
 
@@ -93,19 +94,19 @@ namespace ASP.NETCoreWebAPIApplication_Task2_3Radency_.Controllers
         [Route("/api/books/{id:int}")]
         public IResult GetBook(int id)
         {
-            return Results.Json(db.Books.Where(p => p.Id == id).Select(c => new
+            return Results.Json(db.Books.Where(p => p.Id == id).Select(c => new BookDetailDTO()
             {
-                id = c.Id,
-                title = c.Title,
-                author = c.Author,
-                cover = c.Cover,
-                content = c.Content,
-                rating = db.Ratings.Where(i => i.BookId == c.Id).Average(p => p.Scope),
-                reviews = db.Reviews.Where(d => d.BookId == c.Id).Select(p => new
+                Id = c.Id,
+                Title = c.Title,
+                Author = c.Author,
+                Cover = c.Cover,
+                Content = c.Content,
+                Rating = db.Ratings.Where(i => i.BookId == c.Id).Average(p => p.Scope),
+                Reviews = db.Reviews.Where(d => d.BookId == c.Id).Select(p => new Review()
                 {
-                    id = p.Id,
-                    message = p.Message,
-                    reviewer = p.Reviewer
+                    Id = p.Id,
+                    Message = p.Message,
+                    Reviewer = p.Reviewer
                 }).ToList()
             }));
         }

@@ -24,7 +24,9 @@ namespace ASP.NETCoreWebAPIApplication_Task2_3Radency_
             });
             builder.Services.AddMvc();
 
+
             var app = builder.Build();
+
 
             // Маршрут для співставлення контролера та його методів із запитом користувача
             app.MapControllerRoute(   
