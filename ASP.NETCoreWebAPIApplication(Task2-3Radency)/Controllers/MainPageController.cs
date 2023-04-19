@@ -115,7 +115,7 @@ namespace ASP.NETCoreWebAPIApplication_Task2_3Radency_.Controllers
         // правильне воно.
         [HttpDelete]
         [Route("/api/books/{id:int}")]
-        public async Task<IResult> DeleteBook(int id, string secret, IConfiguration conf) 
+        public async Task<IResult> DeleteBook(int id, string secret, [FromServices] IConfiguration conf) 
         {
             // Якщо кодове слово вірне, то продовжуємо видалення, якщо ні, то надсилаємо статусний код з
             // повідомленням про помилку
@@ -198,7 +198,8 @@ namespace ASP.NETCoreWebAPIApplication_Task2_3Radency_.Controllers
                 return Results.NotFound();
             }
 
-            review.BookId = book.Id;
+            review.Id = await db.Reviews.MaxAsync(r => r.Id) + 1;
+            review.BookId = id;
             db.Reviews.Add(review);
             await db.SaveChangesAsync();
 
@@ -207,7 +208,7 @@ namespace ASP.NETCoreWebAPIApplication_Task2_3Radency_.Controllers
 
         // Обробка запиту Put, який оброблює маршрут /api/books/{id}/rate, та створює новий рейтинг.
         [HttpPut]
-        [Route("/api/books/{id}/rate")]
+        [Route("/api/books/{id:int}/rate")]
         public async Task<IResult> AddRating(int id, Rating rating)
         {
             Book? book = await db.Books.FindAsync(id);
@@ -216,6 +217,7 @@ namespace ASP.NETCoreWebAPIApplication_Task2_3Radency_.Controllers
                 return Results.NotFound();
             }
 
+            rating.Id = await db.Ratings.MaxAsync(r => r.Id) + 1;
             rating.BookId = book.Id;
             db.Ratings.Add(rating);
             await db.SaveChangesAsync();
