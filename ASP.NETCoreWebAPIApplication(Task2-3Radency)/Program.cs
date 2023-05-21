@@ -15,8 +15,8 @@ namespace ASP.NETCoreWebAPIApplication_Task2_3Radency_
 
             var builder = WebApplication.CreateBuilder(args);
 
-            // Реєструємо контекст даних як сервіс, при чому використовуємо розширення для SQLite, для інших треба буде
-            // встановлювати інший пакет розширення, і по іншому показувати показувати підключення до БД.
+            // Реєструємо контекст даних як сервіс, при чому використовуємо розширення Microsoft.EntityFrameworkCore.InMemory,
+            // для інших треба буде встановлювати інший пакет розширення, і по іншому показувати показувати підключення до БД.
             // В даному випадку ми кажемо, що дані зберігаються у пам'яті
             builder.Services.AddDbContext<BookLibraryContext>(options =>
             {
